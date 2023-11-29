@@ -26,12 +26,16 @@ canvas {
 
 button {
     margin: 0 10px;
-    padding: 8px 15px;
-    background-color: #4CAF50;
+    padding: 20px;
+    background-color: rgb(45, 39, 131);
     color: white;
     border: none;
     border-radius: 5px;
     cursor: pointer;
+}
+
+#restartAnimation {
+    background-color: #339179;
 }
 
 button:hover {

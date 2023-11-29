@@ -20,7 +20,7 @@ document.addEventListener("DOMContentLoaded", function () {
       const scaleY = canvas.height / rect.height;
       const x = (event.clientX - rect.left) * scaleX;
       const y = (event.clientY - rect.top) * scaleY;
-      controlPoints.push({ x: x, y: y });
+      controlPoints.push({ x, y });
       drawPoints();
     }
   });
@@ -46,49 +46,44 @@ document.addEventListener("DOMContentLoaded", function () {
     drawAxes();
     controlPoints.forEach((point) => {
       ctx.beginPath();
-      ctx.arc(point.x, point.y, 5, 0, 2 * Math.PI);
+      ctx.arc(point.x, point.y, 5, 0, Math.PI * 2);
       ctx.fillStyle = "red";
       ctx.fill();
-      ctx.closePath();
     });
-
-    if (controlPoints.length === maxPoints && !animationFrame) {
-      t = 0;
-      animateCurve();
-    }
   }
 
   function animateCurve() {
+    if (t > 1) {
+      cancelAnimationFrame(animationFrame);
+      return;
+    }
+
     animationFrame = requestAnimationFrame(animateCurve);
+
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     drawAxes();
     drawPoints();
 
     ctx.beginPath();
     ctx.moveTo(controlPoints[0].x, controlPoints[0].y);
-    ctx.quadraticCurveTo(
-      controlPoints[0].x + t * (controlPoints[1].x - controlPoints[0].x),
-      controlPoints[0].y + t * (controlPoints[1].y - controlPoints[0].y),
-      controlPoints[0].x + t * (controlPoints[2].x - controlPoints[0].x),
-      controlPoints[0].y + t * (controlPoints[2].y - controlPoints[0].y)
-    );
+
+    for (let i = 0; i <= t; i += 0.01) {
+      let x =
+        Math.pow(1 - i, 2) * controlPoints[0].x +
+        2 * (1 - i) * i * controlPoints[1].x +
+        Math.pow(i, 2) * controlPoints[2].x;
+      let y =
+        Math.pow(1 - i, 2) * controlPoints[0].y +
+        2 * (1 - i) * i * controlPoints[1].y +
+        Math.pow(i, 2) * controlPoints[2].y;
+      ctx.lineTo(x, y);
+    }
+
     ctx.strokeStyle = "blue";
     ctx.lineWidth = 2;
     ctx.stroke();
 
-    updateValues(t);
     t += 0.01;
-    if (t >= 1) {
-      cancelAnimationFrame(animationFrame);
-      animationFrame = null;
-    }
-  }
-
-  function updateValues(t) {
-    valuesDiv.innerHTML = `t: ${t.toFixed(2)}<br>
-          Control Point 1: (${controlPoints[0].x}, ${controlPoints[0].y})<br>
-          Control Point 2: (${controlPoints[1].x}, ${controlPoints[1].y})<br>
-          Anchor Point: (${controlPoints[2].x}, ${controlPoints[2].y})`;
   }
 
   function drawAxes() {
