@@ -1,12 +1,11 @@
 document.addEventListener("DOMContentLoaded", function () {
   const canvas = document.getElementById("bezierCanvas");
   const ctx = canvas.getContext("2d");
-  const valuesDiv = document.getElementById("values");
   const restartBtn = document.getElementById("restartAnimation");
   const resetBtn = document.getElementById("resetCanvas");
 
   canvas.width = canvas.offsetWidth;
-  canvas.height = canvas.offsetHeight;
+  canvas.height = canvas.offsetHeight * 0.7;
 
   let controlPoints = [];
   const maxPoints = 3;
